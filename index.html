@@ -139,21 +139,51 @@
             overflow: auto;
             scrollbar-width: none;
             flex: 1 1 auto;
+            -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
          }
          .roll-viewport::-webkit-scrollbar {
             display: none;
          }
+         .mobile-tip { display: none; color: #888; font-size: 12px; padding: 6px 8px; }
+         @media (hover: none) and (pointer: coarse) {
+            .mobile-tip { display: block; }
+         }
          canvas {
             display: block;
             background: #fff;
+            touch-action: none; /* prevent page scroll while editing on canvas */
          }
          #transport {
             display: flex;
             gap: 6px;
             margin-left: auto;
          }
+
+         /* 모바일 반응형 레이아웃 */
+         @media (max-width: 768px) {
+            .wrap {
+               grid-template-columns: 1fr;
+               grid-template-rows: auto auto 1fr auto;
+               padding: 6px;
+            }
+            .toolbar {
+               gap: 6px;
+            }
+            .track-body {
+               grid-template-columns: 1fr; /* stack inputs */
+            }
+            .canvas-wrap {
+               grid-template-columns: 40px 1fr; /* narrower gutter on mobile */
+            }
+            #progress {
+               min-width: 120px;
+            }
+            button {
+               padding: 8px 10px;
+            }
+         }
       </style>
-   <script type="module" crossorigin src="./assets/index-DIBeqkXv.js"></script>
+     <script type="module" crossorigin src="./assets/index-CYkpvyrw.js"></script>
    </head>
    <body>
       <div class="wrap">
@@ -215,6 +245,7 @@
                <div class="roll-viewport" id="rollViewport">
                   <canvas id="roll"></canvas>
                </div>
+               <div class="mobile-tip">두 손가락 드래그로 이동, 핀치로 확대/축소</div>
                <div id="customScrollbar" style="height: 16px; background: #f0f0f0; border-top: 1px solid #e0e0e0">
                   <div id="customScrollbarThumb" style="height: 100%; background: #c1c1c1; width: 0; position: relative"></div>
                </div>
