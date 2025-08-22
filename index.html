@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>MML</title>
+      <style>
+         :root {
+            --bg: #fafafa;
+            --panel: #fff;
+            --border: #e0e0e0;
+            --text: #222;
+         }
+         html,
+         body {
+            height: 100%;
+         }
+         body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            overflow: hidden;
+         }
+         .wrap {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 8px;
+            height: 100vh;
+            box-sizing: border-box;
+            margin: 0 auto;
+            padding: 8px;
+         }
+         .toolbar {
+            grid-column: 1 / span 2;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+         }
+         .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 100%;
+         }
+         .tracks {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: 100%;
+            box-sizing: border-box;
+         }
+         .track-card {
+            display: grid;
+            grid-template-columns: 10px 1fr;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            align-items: center;
+            cursor: pointer;
+            border: 1px solid #ddd;
+         }
+         .track-color {
+            width: 10px;
+            height: 100%;
+            border-radius: 4px;
+         }
+         .track-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            align-items: center;
+         }
+         .track-body input,
+         .track-body select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 4px;
+         }
+         .lengths {
+            display: flex;
+            gap: 4px;
+         }
+         .lengths button {
+            padding: 6px 8px;
+            border: 1px solid #bbb;
+            background: #f8f8f8;
+            border-radius: 6px;
+            cursor: pointer;
+         }
+         .lengths button.active {
+            background: #3a7afe;
+            color: #fff;
+            border-color: #3a7afe;
+         }
+         .canvas-wrap {
+            position: relative;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            grid-template-rows: 1fr; /* ensure full stretch */
+         }
+         .octave-gutter {
+            position: relative;
+            border-right: 1px solid #e0e0e0;
+            background: #fff;
+         }
+         .octave-viewport {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+         }
+         .octave-layer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            will-change: transform;
+         }
+         .roll-scroll {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+         }
+         .roll-viewport {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            scrollbar-width: none;
+            flex: 1 1 auto;
+         }
+         .roll-viewport::-webkit-scrollbar {
+            display: none;
+         }
+         canvas {
+            display: block;
+            background: #fff;
+         }
+         #transport {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+         }
+      </style>
+   <script type="module" crossorigin src="./assets/index-DIBeqkXv.js"></script>
+   </head>
+   <body>
+      <div class="wrap">
+         <div class="toolbar">
+            <div class="lengths" id="lenBar"></div>
+            <div id="tempoBox" style="display: flex; align-items: center; gap: 6px; margin-left: 12px">
+               <label for="tempoInput" style="font-size: 12px; color: #666" data-i18n="tempoLabel">Tempo</label>
+               <input id="tempoInput" type="number" min="20" max="300" step="1" value="120" style="width: 64px;" />
+               <span data-i18n="bpm" style="font-size: 12px; color: #666">bpm</span>
+               <button id="btnConvert" type="button" data-i18n="convert" style="margin-left: 8px; padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">
+                  변환
+               </button>
+               <button id="btnPasteMML" type="button" data-i18n="paste" style="margin-left: 8px; padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">
+                  붙여넣기
+               </button>
+            </div>
+            <div id="transport" style="display: flex; gap: 6px; justify-content: center; flex-grow: 1">
+               <span
+                  id="progress"
+                  style="
+                     min-width: 160px;
+                     display: inline-block;
+                     text-align: center;
+                     margin-right: 8px;
+                     padding: 6px 10px;
+                     border: 1px solid #cfcfcf;
+                     border-radius: 6px;
+                     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                     background: #fff;
+                  "
+                  >0 / 0</span
+               >
+               <button id="btnPlay" data-i18n="play">재생</button>
+               <button id="btnPause" data-i18n="pause">일시정지</button>
+               <button id="btnStop" data-i18n="stop">정지</button>
+            </div>
+            <div style="display: flex; gap: 6px; margin-left: auto">
+               <button id="btnGuide" type="button" data-i18n="guide" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">조작가이드</button>
+               <button id="langKo" type="button" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">한</button>
+               <button id="langJa" type="button" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">日</button>
+               <button id="langEn" type="button" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">En</button>
+            </div>
+         </div>
+
+         <div class="panel">
+            <div class="tracks" id="tracks"></div>
+         </div>
+
+         <div class="panel canvas-wrap">
+            <div class="octave-gutter">
+               <div class="octave-viewport" id="octaveViewport">
+                  <canvas id="octaveCanvas" class="octave-layer"></canvas>
+               </div>
+            </div>
+            <div class="roll-scroll">
+               <div id="rulerContainer" style="position: relative; border-bottom: 1px solid #e0e0e0; background: #fff">
+                  <canvas id="timeRuler" style="display: block; width: 100%; height: 100%"></canvas>
+               </div>
+               <div class="roll-viewport" id="rollViewport">
+                  <canvas id="roll"></canvas>
+               </div>
+               <div id="customScrollbar" style="height: 16px; background: #f0f0f0; border-top: 1px solid #e0e0e0">
+                  <div id="customScrollbarThumb" style="height: 100%; background: #c1c1c1; width: 0; position: relative"></div>
+               </div>
+            </div>
+         </div>
+         <div class="toolbar" id="footerBar" style="margin-top: 8px">
+            <span id="footerLabel" style="margin-right: 12px; color: #666; font-size: 13px; display: flex; align-items: center">트랙MML</span>
+            <button id="footerMmlEditBtn" data-i18n="edit" style="margin-right: 8px">편집</button>
+            <span id="footerMMLText" style="white-space: pre; font-family: monospace; flex: 1; overflow-x: auto"></span>
+         </div>
+      </div>
+   </body>
+</html>
