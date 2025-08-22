@@ -183,12 +183,18 @@
             }
          }
       </style>
-     <script type="module" crossorigin src="./assets/index-b1W8Jydv.js"></script>
+     <script type="module" crossorigin src="./assets/index-adAyjLV3.js"></script>
    </head>
    <body>
       <div class="wrap">
          <div class="toolbar">
             <div class="lengths" id="lenBar"></div>
+            <div id="timelineEdit" style="display:flex; gap:6px; align-items:center; margin-left: 8px;">
+               <button id="btnPushBeat" type="button" data-i18n="btnBeatPlus" data-i18n-title="tooltipBeatPlus" title="플레이헤드 오른쪽을 한 박 밀기" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">1박+</button>
+               <button id="btnPushBar" type="button" data-i18n="btnBarPlus" data-i18n-title="tooltipBarPlus" title="플레이헤드 오른쪽을 한 마디 밀기" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">마디+</button>
+               <button id="btnCutBeat" type="button" data-i18n="btnBeatMinus" data-i18n-title="tooltipBeatMinus" title="플레이헤드 오른쪽 한 박을 잘라내고 땡기기" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">1박-</button>
+               <button id="btnCutBar" type="button" data-i18n="btnBarMinus" data-i18n-title="tooltipBarMinus" title="플레이헤드 오른쪽 한 마디를 잘라내고 땡기기" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">마디-</button>
+            </div>
             <div id="tempoBox" style="display: flex; align-items: center; gap: 6px; margin-left: 12px">
                <label for="tempoInput" style="font-size: 12px; color: #666" data-i18n="tempoLabel">Tempo</label>
                <input id="tempoInput" type="number" min="20" max="300" step="1" value="120" style="width: 64px;" />
