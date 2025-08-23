@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>MML (Mobile)</title>
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #222; background: #fafafa; }
+      .wrap { padding: 16px; max-width: 720px; margin: 0 auto; }
+      .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+      h1 { margin: 0 0 12px; font-size: 18px; }
+      p { margin: 8px 0; line-height: 1.6; }
+      .actions { display: flex; gap: 8px; margin-top: 16px; }
+      .btn { padding: 10px 12px; border-radius: 8px; border: 1px solid #d1d5db; background: #fff; cursor: pointer; font-weight: 600; }
+      .btn--primary { color: #fff; border-color: #2f65d2; background: #3a7afe; }
+      .hint { font-size: 12px; color: #6b7280; margin-top: 6px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <h1>MML Editor (Mobile)</h1>
+        <p>이 기기는 터치 중심의 환경으로 감지되었습니다. 현재 데스크톱 UI는 마우스/키보드 조작에 최적화되어 있습니다.</p>
+        <p>
+          아래 옵션 중 하나를 선택하세요.
+        </p>
+        <div class="actions">
+          <button id="openDesktop" class="btn btn--primary">데스크톱 UI로 계속</button>
+          <button id="installApp" class="btn">모바일 앱 설치(안내)</button>
+        </div>
+        <div class="hint">Tip: 데스크톱 UI 강제 접속은 URL 뒤에 ?forceDesktop=1 파라미터를 붙여주세요.</div>
+      </div>
+    </div>
+    <script>
+      document.getElementById('openDesktop')?.addEventListener('click', function(){
+        var url = new URL(window.location.origin + window.location.pathname.replace(/mobile\.html$/, 'index.html'));
+        url.searchParams.set('forceDesktop', '1');
+        location.href = url.toString();
+      });
+      document.getElementById('installApp')?.addEventListener('click', function(){
+        alert('모바일 앱은 곧 제공될 예정입니다. 스토어 배포 시 이 페이지에서 설치로 이동하도록 연결할 수 있습니다.');
+      });
+    </script>
+  </body>
+</html>
