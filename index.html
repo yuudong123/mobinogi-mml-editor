@@ -4,6 +4,24 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>MML</title>
+         <script>
+             (function () {
+                try {
+                   var params = new URLSearchParams(location.search);
+                   if (params.get('forceDesktop') === '1') return;
+                   var ua = navigator.userAgent || '';
+                   var isMobileUA = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+                   var isTabletUA = /iPad|Tablet/i.test(ua);
+                   var isCoarse = false;
+                   try { isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches; } catch {}
+                   var isMobileData = navigator.userAgentData && navigator.userAgentData.mobile === true;
+                   if (isMobileUA || isTabletUA || isCoarse || isMobileData) {
+                      // Redirect to mobile landing page
+                      window.location.replace('mobile.html');
+                   }
+                } catch {}
+             })();
+         </script>
       <style>
          :root {
             --bg: #fafafa;
@@ -140,15 +158,12 @@
             overflow-y: auto;   /* native vertical scroll only */
             scrollbar-width: thin;
             flex: 1 1 auto;
-            -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+            
          }
          .roll-viewport::-webkit-scrollbar {
             display: none;
          }
-         .mobile-tip { display: none; color: #888; font-size: 12px; padding: 6px 8px; }
-         @media (hover: none) and (pointer: coarse) {
-            .mobile-tip { display: block; }
-         }
+         
          canvas {
             display: block;
             touch-action: none; /* prevent page scroll while editing on canvas */
@@ -161,31 +176,9 @@
             margin-left: auto;
          }
 
-         /* 모바일 반응형 레이아웃 */
-         @media (max-width: 768px) {
-            .wrap {
-               grid-template-columns: 1fr;
-               grid-template-rows: auto auto 1fr auto;
-               padding: 6px;
-            }
-            .toolbar {
-               gap: 6px;
-            }
-            .track-body {
-               grid-template-columns: 1fr; /* stack inputs */
-            }
-            .canvas-wrap {
-               grid-template-columns: 40px 1fr; /* narrower gutter on mobile */
-            }
-            #progress {
-               min-width: 120px;
-            }
-            button {
-               padding: 8px 10px;
-            }
-         }
+         
       </style>
-     <script type="module" crossorigin src="./assets/index-CoHfhrAG.js"></script>
+     <script type="module" crossorigin src="./assets/index-Do_RIIz_.js"></script>
    </head>
    <body>
       <div class="wrap">
@@ -257,7 +250,7 @@
                      <!-- Notes layer: notes, selection, playhead (redrawn on edit/h-scroll) -->
                      <canvas id="roll" style="position: absolute; left: 0; top: 0; z-index: 1;" data-i18n-title="tooltipPianoRoll" title="Piano roll: click/drag to edit"></canvas>
                   </div>
-               <div class="mobile-tip">두 손가락 드래그로 이동, 핀치로 확대/축소</div>
+               
                <div id="customScrollbar" style="height: 16px; background: #f0f0f0; border-top: 1px solid #e0e0e0">
                   <div id="customScrollbarThumb" style="height: 100%; background: #c1c1c1; width: 0; position: relative"></div>
                </div>
