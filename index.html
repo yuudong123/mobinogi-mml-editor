@@ -4,35 +4,19 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>MML</title>
-         <script>
-             (function () {
-                try {
-                   var params = new URLSearchParams(location.search);
-                   if (params.get('forceDesktop') === '1') return;
-                   var ua = navigator.userAgent || '';
-                   var isMobileUA = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
-                   var isTabletUA = /iPad|Tablet/i.test(ua);
-                   var isCoarse = false;
-                   try { isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches; } catch {}
-                   var isMobileData = navigator.userAgentData && navigator.userAgentData.mobile === true;
-                   if (isMobileUA || isTabletUA || isCoarse || isMobileData) {
-                      // Redirect to mobile landing page
-                      window.location.replace('mobile.html');
-                   }
-                } catch {}
-             })();
-         </script>
+         
       <style>
          :root {
             --bg: #fafafa;
             --panel: #fff;
             --border: #e0e0e0;
             --text: #222;
+            --transport-blue: #3a6fdc;
+            --transport-red: #e53935;
+            --tracks-width: 200px;
+            --track-gap: 6px;
          }
-         html,
-         body {
-            height: 100%;
-         }
+         html, body { height: 100%; }
          body {
             margin: 0;
             background: var(--bg);
@@ -42,8 +26,8 @@
          }
          .wrap {
             display: grid;
-            grid-template-columns: 260px 1fr;
-            grid-template-rows: auto 1fr;
+            grid-template-columns: var(--tracks-width) 1fr;
+            grid-template-rows: auto 1fr auto;
             gap: 8px;
             height: 100vh;
             box-sizing: border-box;
@@ -57,24 +41,37 @@
             border-radius: 8px;
             padding: 8px;
             display: flex;
+            flex-direction: column;
             gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
          }
+         .toolbar-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+         }
+         /* Keep bottom toolbar on a single line */
+         #toolbarBottom { flex-wrap: nowrap; }
          .panel {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 8px;
             overflow: hidden;
             height: 100%;
+            min-width: 0;
          }
          .tracks {
             padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            display: grid;
+            grid-auto-rows: max-content;
+            row-gap: var(--track-gap);
             height: 100%;
             box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            align-content: start;
          }
          .track-card {
             display: grid;
@@ -85,148 +82,154 @@
             align-items: center;
             cursor: pointer;
             border: 1px solid #ddd;
-         }
-         .track-color {
-            width: 10px;
-            height: 100%;
-            border-radius: 4px;
-         }
-         .track-body {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            align-items: center;
-         }
-         .track-body input,
-         .track-body select {
             width: 100%;
             box-sizing: border-box;
-            padding: 4px;
+            overflow: hidden;
+            transition: background-color .2s ease, border-color .2s ease, box-shadow .25s ease;
          }
-         .lengths {
-            display: flex;
-            gap: 4px;
-         }
-         .lengths button {
-            padding: 6px 8px;
-            border: 1px solid #bbb;
-            background: #f8f8f8;
-            border-radius: 6px;
-            cursor: pointer;
-         }
-         .lengths button.active {
-            background: #3a7afe;
-            color: #fff;
-            border-color: #3a7afe;
-         }
+         .track-card.is-active { border-color: #3a7afe; box-shadow: 0 0 0 2px rgba(58,122,254,0.1) inset; background: #FFFFE0; }
+         .track-card:not(.is-active):hover { background: #fcfcff; }
+         .track-color { width: 10px; height: 100%; border-radius: 4px; }
+         /* new compact body */
+         .track-main { display: grid; grid-template-rows: auto auto; row-gap: var(--track-gap); height: 100%; min-width: 0; }
+         .track-row { display: flex; gap: var(--track-gap); align-items: center; min-width: 0; }
+         .track-row--bottom { display: grid; grid-template-columns: 1fr auto auto; align-items: center; column-gap: var(--track-gap); }
+         .track-name { flex: 1 1 auto; min-width: 0; }
+         .track-name input { width: 100%; box-sizing: border-box; padding: 4px 6px; font-size: 12px; }
+         .track-instrument { min-width: 0; }
+         .track-instrument .dropdown, .track-instrument select { width: 100%; min-width: 0; }
+         .track-controls { display: inline-flex; gap: 4px; }
+         .track-controls button { width: 24px; height: 24px; font-size: 12px; font-weight: 700; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; background: #fff; color: #000; padding: 0; }
+         .track-charcount { font-size: 11px; color: #666; white-space: nowrap; }
+         .lengths { display: flex; gap: 4px; }
+         .lengths button { padding: 6px 8px; border: 1px solid #bbb; background: #f8f8f8; border-radius: 6px; cursor: pointer; }
+         .lengths button.active { background: #3a7afe; color: #fff; border-color: #3a7afe; }
          .canvas-wrap {
             position: relative;
             height: 100%;
             display: grid;
             grid-template-columns: 48px 1fr;
-            grid-template-rows: 1fr; /* ensure full stretch */
+            grid-template-rows: 1fr;
          }
-         .octave-gutter {
-            position: relative;
-            border-right: 1px solid #e0e0e0;
-            background: #fff;
-         }
-         .octave-viewport {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-         }
-         .octave-layer {
-            position: absolute;
-            left: 0;
-            top: 0;
-            will-change: transform;
-         }
-         .roll-scroll {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-         }
-         .roll-viewport {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden; /* horizontal is managed logically */
-            overflow-y: auto;   /* native vertical scroll only */
-            scrollbar-width: thin;
-            flex: 1 1 auto;
-            
-         }
-         .roll-viewport::-webkit-scrollbar {
-            display: none;
-         }
-         
-         canvas {
-            display: block;
-            touch-action: none; /* prevent page scroll while editing on canvas */
-         }
+         .octave-gutter { position: relative; border-right: 1px solid #e0e0e0; background: #fff; }
+         .octave-viewport { position: absolute; inset: 0; overflow: hidden; }
+         .octave-layer { position: absolute; left: 0; top: 0; will-change: transform; }
+         .roll-scroll { position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+         .roll-viewport { position: relative; width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; flex: 1 1 auto; }
+         .roll-viewport::-webkit-scrollbar { display: none; }
+         canvas { display: block; }
          #rollBg { background: #fff; }
          #roll { background: transparent; }
-         #transport {
-            display: flex;
-            gap: 6px;
-            margin-left: auto;
+         #transport { display: flex; gap: 6px; align-items: center; }
+         #transport #btnPlay, #transport #btnPause, #transport #btnStop {
+            background: transparent !important;
+            border: none !important;
+            width: 32px; height: 32px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 32px; line-height: 1; cursor: pointer; border-radius: 4px;
+         }
+         /* transport icon <img> size */
+         #transport img { width: 20px; height: auto; display: block; }
+
+         /* timeline edit group */
+         #timelineEdit { display:flex; gap:6px; align-items:center; margin-left: 8px; }
+         #timelineEdit button {
+            padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer;
+         }
+         /* mobile toggle spacing */
+         #btnToggleTouch { margin-left: 8px; }
+
+         /* tempo area */
+         #tempoBox { display: flex; align-items: center; gap: 6px; margin-left: 12px; }
+         #tempoBox label, #tempoBox [data-i18n="bpm"] { font-size: 12px; color: #666; }
+         #tempoDisplay {
+            display:inline-block; font-size: 12px; width:64px; padding: 4px 6px; border: 1px solid #cfcfcf; border-radius: 6px; background:#fff; text-align:right; cursor: pointer;
          }
 
-         
+         /* progress and playhead mode */
+         #progress {
+            min-width: 160px; display: inline-block; text-align: center; margin-right: 8px; padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #fff;
+         }
+         #btnPlayheadMode { padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer; }
+
+         /* mobile tools row */
+         #mobileTools { display:flex; align-items:center; gap:6px; flex-wrap: nowrap; margin-left: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+         #mobileTools > * { flex: 0 0 auto; }
+         .divider { width:1px; height:20px; background:#ddd; margin:0 4px; display:inline-block; }
+
+         /* ruler and canvases */
+         #rulerContainer { position: relative; border-bottom: 1px solid #e0e0e0; background: #fff; }
+         #timeRuler { display: block; width: 100%; height: 100%; }
+         #rollBg { position: absolute; left: 0; top: 0; z-index: 0; width: 100%; height: 100%; }
+         #roll { position: absolute; left: 0; top: 0; z-index: 1; }
+
+         /* custom scrollbar styles */
+         #customScrollbar { height: 16px; background: #f0f0f0; border-top: 1px solid #e0e0e0; }
+         #customScrollbarThumb { height: 100%; background: #c1c1c1; width: 0; position: relative; }
+
+         /* footer bar */
+         #footerBar { margin-top: 0; flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; grid-column: 1 / span 2; }
+         #footerLabel { margin-right: 12px; color: #666; font-size: 13px; display: flex; align-items: center; }
+         #footerMmlEditBtn { margin-right: 8px; }
+         #footerMMLText { white-space: pre; font-family: monospace; flex: 1 1 auto; overflow-x: auto; }
+
+         /* bottom right action group */
+         #toolbarBottom .actions-right { display: flex; gap: 6px; margin-left: auto; }
       </style>
-     <script type="module" crossorigin src="./assets/index-Do_RIIz_.js"></script>
+     <script type="module" crossorigin src="./assets/index-DRVy-7jX.js"></script>
    </head>
    <body>
-      <div class="wrap">
-         <div class="toolbar">
-            <div class="lengths" id="lenBar"></div>
-            <div id="timelineEdit" style="display:flex; gap:6px; align-items:center; margin-left: 8px;">
-               <button id="btnPushBeat" type="button" data-i18n="btnBeatPlus" data-i18n-title="tooltipBeatPlus" title="Push right of playhead by 1 beat" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Beat+</button>
-               <button id="btnPushBar" type="button" data-i18n="btnBarPlus" data-i18n-title="tooltipBarPlus" title="Push right of playhead by 1 bar" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Bar+</button>
-               <button id="btnCutBeat" type="button" data-i18n="btnBeatMinus" data-i18n-title="tooltipBeatMinus" title="Cut 1 beat to the right of the playhead and pull left" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Beat-</button>
-               <button id="btnCutBar" type="button" data-i18n="btnBarMinus" data-i18n-title="tooltipBarMinus" title="Cut 1 bar to the right of the playhead and pull left" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Bar-</button>
-            </div>
-            <div id="tempoBox" style="display: flex; align-items: center; gap: 6px; margin-left: 12px">
-               <label for="tempoInput" style="font-size: 12px; color: #666" data-i18n="tempoLabel">Tempo</label>
-               <span id="tempoDisplay" data-i18n-title="tooltipTempoInput" title="Set tempo" style="display:inline-block; font-size: 12px; width:64px; padding: 4px 6px; border: 1px solid #cfcfcf; border-radius: 6px; background:#fff; text-align:right; cursor: pointer">120</span>
-               <span data-i18n="bpm" style="font-size: 12px; color: #666">bpm</span>
-               <button id="btnConvert" type="button" data-i18n="convert" data-i18n-title="tooltipConvert" title="Convert MML" style="margin-left: 8px; padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Convert</button>
-               <button id="btnPasteMML" type="button" data-i18n="paste" data-i18n-title="tooltipPaste" title="Paste" style="margin-left: 8px; padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Paste</button>
-            </div>
-            <div id="transport" style="display: flex; gap: 6px; justify-content: center; flex-grow: 1">
-               <span
-                  id="progress"
-                  data-i18n-title="tooltipProgress"
-                  title="Toggle display (ticks/bar.beat/time)"
-                  style="
-                     min-width: 160px;
-                     display: inline-block;
-                     text-align: center;
-                     margin-right: 8px;
-                     padding: 6px 10px;
-                     border: 1px solid #cfcfcf;
-                     border-radius: 6px;
-                     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-                     background: #fff;
-                  "
-                  >0 / 0</span
-               >
-               <button id="btnPlayheadMode" type="button" data-i18n-title="tooltipPlayheadToggle" title="Toggle playhead display (area/line)" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">Playhead: Area</button>
-               <button id="btnPlay" data-i18n="play" data-i18n-title="tooltipPlay" title="Play">Play</button>
-               <button id="btnPause" data-i18n="pause" data-i18n-title="tooltipPause" title="Pause">Pause</button>
-               <button id="btnStop" data-i18n="stop" data-i18n-title="tooltipStop" title="Stop">Stop</button>
-            </div>
-            <div style="display: flex; gap: 6px; margin-left: auto">
-               <button id="btnGuide" type="button" data-i18n="guide" data-i18n-title="tooltipGuide" title="User Guide" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">User Guide</button>
-               <button id="langKo" type="button" data-i18n-title="tooltipLangKo" title="Korean" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">한</button>
-               <button id="langJa" type="button" data-i18n-title="tooltipLangJa" title="Japanese" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">日</button>
-               <button id="langEn" type="button" data-i18n-title="tooltipLangEn" title="English" style="padding: 6px 10px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer">En</button>
-            </div>
-         </div>
+         <div class="wrap">
+             <div class="toolbar">
+                <div class="toolbar-row" id="toolbarTop">
+                   <div class="lengths" id="lenBar"></div>
+                  <div id="timelineEdit">
+                     <button id="btnPushBeat" type="button" data-i18n="btnBeatPlus" data-i18n-title="tooltipBeatPlus" title="Push right of playhead by 1 beat">Beat+</button>
+                     <button id="btnPushBar" type="button" data-i18n="btnBarPlus" data-i18n-title="tooltipBarPlus" title="Push right of playhead by 1 bar">Bar+</button>
+                     <button id="btnCutBeat" type="button" data-i18n="btnBeatMinus" data-i18n-title="tooltipBeatMinus" title="Cut 1 beat to the right of the playhead and pull left">Beat-</button>
+                     <button id="btnCutBar" type="button" data-i18n="btnBarMinus" data-i18n-title="tooltipBarMinus" title="Cut 1 bar to the right of the playhead and pull left">Bar-</button>
+                   </div>
+                  <button id="btnToggleTouch" type="button" data-i18n-title="tooltipTouchToggleShow" title="Show touch controls" aria-label="Toggle touch controls">Mobile UI</button>
+                  <div id="tempoBox">
+                     <label for="tempoInput" data-i18n="tempoLabel">Tempo</label>
+                     <span id="tempoDisplay" data-i18n-title="tooltipTempoInput" title="Set tempo">120</span>
+                     <span data-i18n="bpm">bpm</span>
+                     <button id="btnConvert" type="button" data-i18n="convert" data-i18n-title="tooltipConvert" title="Convert MML">Convert</button>
+                     <button id="btnPasteMML" type="button" data-i18n="paste" data-i18n-title="tooltipPaste" title="Paste">Paste</button>
+                   </div>
+                   <div id="transport">
+                     <span id="progress" data-i18n-title="tooltipProgress" title="Toggle display (ticks/bar.beat/time)">0 / 0</span>
+                     <button id="btnPlayheadMode" type="button" data-i18n-title="tooltipPlayheadToggle" title="Toggle playhead display (area/line)">Playhead: Area</button>
+                     <button id="btnPlay" data-i18n-title="tooltipPlay" aria-label="Play" title="Play"><img src="../images/play.svg" alt=""/></button>
+                     <button id="btnPause" data-i18n-title="tooltipPause" aria-label="Pause" title="Pause"><img src="../images/pause.svg" alt=""/></button>
+                     <button id="btnStop" data-i18n-title="tooltipStop" aria-label="Stop" title="Stop"><img src="../images/stop.svg" alt=""/></button>
+                   </div>
+                </div>
+                <div class="toolbar-row" id="toolbarBottom">
+                  <div id="mobileTools">
+                      <button id="btnModeSelect" type="button" data-i18n-title="tooltipDrawMode" title="Draw mode" aria-label="Toggle Select/Draw mode">✏️</button>
+                      <button id="btnClearSelection" type="button" data-i18n-title="tooltipClearSelection" title="Clear selection" aria-label="Clear selection">🧹</button>
+                     <span class="divider"></span>
+                      <button id="btnCopyNotes" type="button" data-i18n-title="tooltipCopyNotes" title="Copy notes" aria-label="Copy">📄</button>
+                      <button id="btnCutNotes" type="button" data-i18n-title="tooltipCutNotes" title="Cut notes" aria-label="Cut">✂️</button>
+                      <button id="btnPasteNotes" type="button" data-i18n-title="tooltipPasteNotes" title="Paste notes at playhead" aria-label="Paste">📋</button>
+                      <button id="btnDeleteNotes" type="button" data-i18n-title="tooltipDeleteNotes" title="Delete selected notes" aria-label="Delete">🗑️</button>
+                     <span class="divider"></span>
+                      <button id="btnVolumeDown" type="button" data-i18n-title="tooltipVolumeDown" title="Volume -1" aria-label="Volume down">🔉</button>
+                      <button id="btnVolumeUp" type="button" data-i18n-title="tooltipVolumeUp" title="Volume +1" aria-label="Volume up">🔊</button>
+                     <span class="divider"></span>
+                      <button id="btnZoomOut" type="button" data-i18n-title="tooltipZoomOut" title="Zoom out" aria-label="Zoom out">🔍➖</button>
+                      <button id="btnZoomIn" type="button" data-i18n-title="tooltipZoomIn" title="Zoom in" aria-label="Zoom in">🔍➕</button>
+                      <button id="btnSelectAll" type="button" data-i18n-title="tooltipSelectAll" title="Select all in active track" aria-label="Select all">☑️</button>
+                   </div>
+                  <div class="actions-right">
+                     <button id="btnGuide" type="button" data-i18n="guide" data-i18n-title="tooltipGuide" title="User Guide">User Guide</button>
+                     <button id="langKo" type="button" data-i18n-title="tooltipLangKo" title="Korean">한</button>
+                     <button id="langJa" type="button" data-i18n-title="tooltipLangJa" title="Japanese">日</button>
+                     <button id="langEn" type="button" data-i18n-title="tooltipLangEn" title="English">En</button>
+                   </div>
+                </div>
+             </div>
 
          <div class="panel">
             <div class="tracks" id="tracks"></div>
@@ -239,27 +242,23 @@
                </div>
             </div>
             <div class="roll-scroll">
-               <div id="rulerContainer" style="position: relative; border-bottom: 1px solid #e0e0e0; background: #fff">
-                  <canvas id="timeRuler" data-i18n-title="tooltipRuler" title="Time ruler: click to move playhead" style="display: block; width: 100%; height: 100%"></canvas>
+               <div id="rulerContainer">
+                  <canvas id="timeRuler" data-i18n-title="tooltipRuler" title="Time ruler: click to move playhead"></canvas>
                </div>
-                  <div class="roll-viewport" id="rollViewport" style="position: relative;">
-                     <!-- Spacer to provide vertical scroll area (absolute canvases don't contribute to scrollHeight) -->
-                     <div id="vSpacer" style="width: 1px; height: 0;"></div>
-                     <!-- Background layer: pitch stripes + bar/beat grid (redrawn only on zoom/resize) -->
-                     <canvas id="rollBg" style="position: absolute; left: 0; top: 0; z-index: 0; width: 100%; height: 100%;" aria-hidden="true"></canvas>
-                     <!-- Notes layer: notes, selection, playhead (redrawn on edit/h-scroll) -->
-                     <canvas id="roll" style="position: absolute; left: 0; top: 0; z-index: 1;" data-i18n-title="tooltipPianoRoll" title="Piano roll: click/drag to edit"></canvas>
+                  <div class="roll-viewport" id="rollViewport">
+                     <canvas id="rollBg" aria-hidden="true"></canvas>
+                     <canvas id="roll" data-i18n-title="tooltipPianoRoll" title="Piano roll: click/drag to edit"></canvas>
                   </div>
                
-               <div id="customScrollbar" style="height: 16px; background: #f0f0f0; border-top: 1px solid #e0e0e0">
-                  <div id="customScrollbarThumb" style="height: 100%; background: #c1c1c1; width: 0; position: relative"></div>
+               <div id="customScrollbar">
+                  <div id="customScrollbarThumb"></div>
                </div>
             </div>
          </div>
-         <div class="toolbar" id="footerBar" style="margin-top: 8px">
-            <span id="footerLabel" style="margin-right: 12px; color: #666; font-size: 13px; display: flex; align-items: center" data-i18n-title="tooltipEditMML" title="Edit current track MML">Track MML</span>
-            <button id="footerMmlEditBtn" data-i18n="edit" data-i18n-title="tooltipEditMML" title="Edit current track MML" style="margin-right: 8px">Edit</button>
-            <span id="footerMMLText" style="white-space: pre; font-family: monospace; flex: 1; overflow-x: auto"></span>
+         <div class="toolbar" id="footerBar">
+            <span id="footerLabel" data-i18n-title="tooltipEditMML" title="Edit current track MML">Track MML</span>
+            <button id="footerMmlEditBtn" data-i18n="edit" data-i18n-title="tooltipEditMML" title="Edit current track MML">Edit</button>
+            <span id="footerMMLText"></span>
          </div>
       </div>
    </body>
