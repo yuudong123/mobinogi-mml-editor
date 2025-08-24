@@ -158,6 +158,8 @@
          #mobileTools { display:flex; align-items:center; gap:6px; flex-wrap: nowrap; margin-left: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
          #mobileTools > * { flex: 0 0 auto; }
          #mobileTools button { padding: 4px 8px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer; }
+         #mobileTools input[type="range"] { height: 24px; accent-color: #3a7afe; }
+         #keyHeightRange { width: 120px; }
          .divider { width:1px; height:20px; background:#ddd; margin:0 4px; display:inline-block; }
          /* select mode active style */
          #btnModeSelect.is-active { background: #E6F0FF !important; border-color: #b7d2ff !important; }
@@ -183,7 +185,7 @@
          #toolbarBottom .actions-right { display: flex; gap: 6px; margin-left: auto; }
 
       </style>
-     <script type="module" crossorigin src="./assets/index-DajZmB_v.js"></script>
+     <script type="module" crossorigin src="./assets/index-qfxeFGos.js"></script>
    </head>
    <body>
          <div class="wrap">
@@ -213,24 +215,26 @@
                    </div>
                 </div>
                 <div class="toolbar-row" id="toolbarBottom">
-                  <div id="mobileTools">
-                      <button id="btnModeSelect" type="button" data-i18n-title="tooltipDrawMode" title="Draw mode" aria-label="Toggle Select/Draw mode">✏️</button>
-                      <button id="btnClearSelection" type="button" data-i18n-title="tooltipClearSelection" title="Clear selection" aria-label="Clear selection">🧹</button>
-                      <button id="btnUndo" type="button" data-i18n-title="tooltipUndo" title="Undo" aria-label="Undo">↶</button>
-                      <button id="btnRedo" type="button" data-i18n-title="tooltipRedo" title="Redo" aria-label="Redo">↷</button>
-                     <span class="divider"></span>
-                      <button id="btnCopyNotes" type="button" data-i18n-title="tooltipCopyNotes" title="Copy notes" aria-label="Copy">📄</button>
-                      <button id="btnCutNotes" type="button" data-i18n-title="tooltipCutNotes" title="Cut notes" aria-label="Cut">✂️</button>
-                      <button id="btnPasteNotes" type="button" data-i18n-title="tooltipPasteNotes" title="Paste notes at playhead" aria-label="Paste">📋</button>
-                      <button id="btnDeleteNotes" type="button" data-i18n-title="tooltipDeleteNotes" title="Delete selected notes" aria-label="Delete">🗑️</button>
-                     <span class="divider"></span>
-                      <button id="btnVolumeDown" type="button" data-i18n-title="tooltipVolumeDown" title="Volume -1" aria-label="Volume down">🔉</button>
-                      <button id="btnVolumeUp" type="button" data-i18n-title="tooltipVolumeUp" title="Volume +1" aria-label="Volume up">🔊</button>
-                     <span class="divider"></span>
-                      <button id="btnZoomOut" type="button" data-i18n-title="tooltipZoomOut" title="Zoom out" aria-label="Zoom out">🔍➖</button>
-                      <button id="btnZoomIn" type="button" data-i18n-title="tooltipZoomIn" title="Zoom in" aria-label="Zoom in">🔍➕</button>
-                      <button id="btnSelectAll" type="button" data-i18n-title="tooltipSelectAll" title="Select all in active track" aria-label="Select all">☑️</button>
-                   </div>
+              <div id="mobileTools">
+                 <button id="btnModeSelect" type="button" data-i18n-title="tooltipDrawMode" title="Draw mode" aria-label="Toggle Select/Draw mode">✏️</button>
+                 <button id="btnSelectAll" type="button" data-i18n="btnSelectAllLabel" data-i18n-title="tooltipSelectAll" title="Select all in active track" aria-label="Select all">Select All</button>
+                 <button id="btnClearSelection" type="button" data-i18n="btnClearSelectionLabel" data-i18n-title="tooltipClearSelection" title="Clear selection" aria-label="Clear selection">Clear</button>
+                <span class="divider"></span>
+                 <button id="btnUndo" type="button" data-i18n-title="tooltipUndo" title="Undo" aria-label="Undo">↶</button>
+                 <button id="btnRedo" type="button" data-i18n-title="tooltipRedo" title="Redo" aria-label="Redo">↷</button>
+                <span class="divider"></span>
+                 <button id="btnCopyNotes" type="button" data-i18n-title="tooltipCopyNotes" title="Copy notes" aria-label="Copy">📄</button>
+                 <button id="btnCutNotes" type="button" data-i18n-title="tooltipCutNotes" title="Cut notes" aria-label="Cut">✂️</button>
+                 <button id="btnPasteNotes" type="button" data-i18n-title="tooltipPasteNotes" title="Paste notes at playhead" aria-label="Paste">📋</button>
+                 <button id="btnDeleteNotes" type="button" data-i18n-title="tooltipDeleteNotes" title="Delete selected notes" aria-label="Delete">🗑️</button>
+                <span class="divider"></span>
+                 <button id="btnVolumeDown" type="button" data-i18n-title="tooltipVolumeDown" title="Volume -1" aria-label="Volume down">🔉</button>
+                 <button id="btnVolumeUp" type="button" data-i18n-title="tooltipVolumeUp" title="Volume +1" aria-label="Volume up">🔊</button>
+                <span class="divider"></span>
+                 <button id="btnZoomOut" type="button" data-i18n-title="tooltipZoomOut" title="Zoom out" aria-label="Zoom out">🔍➖</button>
+                 <button id="btnZoomIn" type="button" data-i18n-title="tooltipZoomIn" title="Zoom in" aria-label="Zoom in">🔍➕</button>
+                 <input id="keyHeightRange" type="range" min="16" max="32" step="1" value="16" data-i18n-title="tooltipKeyHeight" title="Adjust key height (16-32)" aria-label="Key height" />
+               </div>
                   <div class="actions-right">
                      <button id="btnGuide" type="button" data-i18n="guide" data-i18n-title="tooltipGuide" title="User Guide">User Guide</button>
                      <button id="langKo" type="button" data-i18n-title="tooltipLangKo" title="Korean">한</button>
