@@ -161,6 +161,7 @@
          #mobileTools button { padding: 4px 8px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer; }
          #mobileTools input[type="range"] { height: 24px; accent-color: #3a7afe; }
          #keyHeightRange { width: 120px; }
+         .keyheight-label { font-size: 12px; color: #666; min-width: 26px; text-align: right; display:inline-block; }
          .divider { width:1px; height:20px; background:#ddd; margin:0 4px; display:inline-block; }
          /* select mode active style */
          #btnModeSelect.is-active { background: #E6F0FF !important; border-color: #b7d2ff !important; }
@@ -194,7 +195,7 @@
          #toolbarBottom .actions-right { display: flex; gap: 6px; margin-left: auto; }
 
       </style>
-     <script type="module" crossorigin src="./assets/index-BH9j4noZ.js"></script>
+     <script type="module" crossorigin src="./assets/index-gkbbdhlk.js"></script>
    </head>
    <body>
          <div class="wrap">
@@ -242,6 +243,7 @@
                 <span class="divider"></span>
                  <button id="btnZoomOut" type="button" data-i18n-title="tooltipZoomOut" title="Zoom out" aria-label="Zoom out">🔍➖</button>
                  <button id="btnZoomIn" type="button" data-i18n-title="tooltipZoomIn" title="Zoom in" aria-label="Zoom in">🔍➕</button>
+                 <span id="keyHeightLabel" class="keyheight-label">16</span>
                  <input id="keyHeightRange" type="range" min="16" max="32" step="1" value="16" data-i18n-title="tooltipKeyHeight" title="Adjust key height (16-32)" aria-label="Key height" />
                </div>
                   <div class="actions-right">
