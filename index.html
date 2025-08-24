@@ -4,7 +4,7 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>MML</title>
-      <link rel="icon" href="./favicon.ico" />
+         
       <style>
          :root {
             --bg: #fafafa;
@@ -118,8 +118,10 @@
          .roll-viewport { position: relative; width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; flex: 1 1 auto; }
          .roll-viewport::-webkit-scrollbar { display: none; }
          canvas { display: block; }
-         #rollBg { background: #fff; }
+         #rollBg { background: var(--panel); }
          #roll { background: transparent; }
+         /* watermark at piano roll bottom-right */
+         #watermark { position: absolute; right: 8px; bottom: 24px; z-index: 5; color: #000; opacity: 1; font-size: 12px; pointer-events: none; user-select: none; }
          #transport { display: flex; gap: 6px; align-items: center; }
          #transport #btnPlay, #transport #btnPause, #transport #btnStop {
             background: transparent !important;
@@ -155,7 +157,10 @@
          /* mobile tools row */
          #mobileTools { display:flex; align-items:center; gap:6px; flex-wrap: nowrap; margin-left: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
          #mobileTools > * { flex: 0 0 auto; }
+         #mobileTools button { padding: 4px 8px; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; cursor: pointer; }
          .divider { width:1px; height:20px; background:#ddd; margin:0 4px; display:inline-block; }
+         /* select mode active style */
+         #btnModeSelect.is-active { background: #E6F0FF !important; border-color: #b7d2ff !important; }
 
          /* ruler and canvases */
          #rulerContainer { position: relative; border-bottom: 1px solid #e0e0e0; background: #fff; }
@@ -168,15 +173,17 @@
          #customScrollbarThumb { height: 100%; background: #c1c1c1; width: 0; position: relative; }
 
          /* footer bar */
-         #footerBar { margin-top: 0; flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; grid-column: 1 / span 2; }
+         #footerBar { margin-top: 0; flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; grid-column: 1 / span 2; white-space: nowrap; }
          #footerLabel { margin-right: 12px; color: #666; font-size: 13px; display: flex; align-items: center; }
          #footerMmlEditBtn { margin-right: 8px; }
-         #footerMMLText { white-space: pre; font-family: monospace; flex: 1 1 auto; overflow-x: auto; }
+         #footerMMLText { white-space: nowrap; font-family: monospace; flex: 1 1 auto; overflow-x: auto; min-width: 0; }
+         #footerBar button { white-space: nowrap; }
 
          /* bottom right action group */
          #toolbarBottom .actions-right { display: flex; gap: 6px; margin-left: auto; }
+
       </style>
-     <script type="module" crossorigin src="./assets/index-DRVy-7jX.js"></script>
+     <script type="module" crossorigin src="./assets/index-DajZmB_v.js"></script>
    </head>
    <body>
          <div class="wrap">
@@ -200,15 +207,17 @@
                    <div id="transport">
                      <span id="progress" data-i18n-title="tooltipProgress" title="Toggle display (ticks/bar.beat/time)">0 / 0</span>
                      <button id="btnPlayheadMode" type="button" data-i18n-title="tooltipPlayheadToggle" title="Toggle playhead display (area/line)">Playhead: Area</button>
-                     <button id="btnPlay" data-i18n-title="tooltipPlay" aria-label="Play" title="Play"><img src="./images/play.svg" alt=""/></button>
-                     <button id="btnPause" data-i18n-title="tooltipPause" aria-label="Pause" title="Pause"><img src="./images/pause.svg" alt=""/></button>
-                     <button id="btnStop" data-i18n-title="tooltipStop" aria-label="Stop" title="Stop"><img src="./images/stop.svg" alt=""/></button>
+                     <button id="btnPlay" data-i18n-title="tooltipPlay" aria-label="Play" title="Play"><img src="../images/play.svg" alt=""/></button>
+                     <button id="btnPause" data-i18n-title="tooltipPause" aria-label="Pause" title="Pause"><img src="../images/pause.svg" alt=""/></button>
+                     <button id="btnStop" data-i18n-title="tooltipStop" aria-label="Stop" title="Stop"><img src="../images/stop.svg" alt=""/></button>
                    </div>
                 </div>
                 <div class="toolbar-row" id="toolbarBottom">
                   <div id="mobileTools">
                       <button id="btnModeSelect" type="button" data-i18n-title="tooltipDrawMode" title="Draw mode" aria-label="Toggle Select/Draw mode">✏️</button>
                       <button id="btnClearSelection" type="button" data-i18n-title="tooltipClearSelection" title="Clear selection" aria-label="Clear selection">🧹</button>
+                      <button id="btnUndo" type="button" data-i18n-title="tooltipUndo" title="Undo" aria-label="Undo">↶</button>
+                      <button id="btnRedo" type="button" data-i18n-title="tooltipRedo" title="Redo" aria-label="Redo">↷</button>
                      <span class="divider"></span>
                       <button id="btnCopyNotes" type="button" data-i18n-title="tooltipCopyNotes" title="Copy notes" aria-label="Copy">📄</button>
                       <button id="btnCutNotes" type="button" data-i18n-title="tooltipCutNotes" title="Cut notes" aria-label="Cut">✂️</button>
@@ -249,6 +258,7 @@
                      <canvas id="rollBg" aria-hidden="true"></canvas>
                      <canvas id="roll" data-i18n-title="tooltipPianoRoll" title="Piano roll: click/drag to edit"></canvas>
                   </div>
+                  <div id="watermark">© 2025 yuudong123</div>
                
                <div id="customScrollbar">
                   <div id="customScrollbarThumb"></div>
