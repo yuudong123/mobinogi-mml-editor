@@ -90,6 +90,7 @@
          }
          .track-card.is-active { border-color: #3a7afe; box-shadow: 0 0 0 2px rgba(58,122,254,0.1) inset; background: #FFFFE0; }
          .track-card:not(.is-active):hover { background: #fcfcff; }
+         .track-card.drop-hover { outline: 2px dashed #3a7afe; outline-offset: -2px; }
          .track-color { width: 10px; height: 100%; border-radius: 4px; }
          /* new compact body */
          .track-main { display: grid; grid-template-rows: auto auto; row-gap: var(--track-gap); height: 100%; min-width: 0; }
@@ -185,17 +186,28 @@
          #customScrollbarThumb { height: 100%; background: #c1c1c1; width: 0; position: relative; }
 
          /* footer bar */
-         #footerBar { margin-top: 0; flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; grid-column: 1 / span 2; white-space: nowrap; padding-bottom: env(safe-area-inset-bottom, 0px); }
+         #footerBar { margin-top: 0; flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; grid-column: 1 / span 2; white-space: nowrap; padding: 8px calc(8px + env(safe-area-inset-left, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) calc(8px + env(safe-area-inset-right, 0px)); overflow-x: auto; }
          #footerLabel { margin-right: 12px; color: #666; font-size: 13px; display: flex; align-items: center; }
          #footerMmlEditBtn { margin-right: 8px; }
          #footerMMLText { white-space: nowrap; font-family: monospace; flex: 1 1 auto; overflow-x: auto; min-width: 0; }
          #footerBar button { white-space: nowrap; }
 
+         #footerBar::-webkit-scrollbar {
+  height: 16px;
+  background: #f0f0f0;
+  border-top: 1px solid #e0e0e0;
+}
+
+#footerBar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 8px;
+}
+
          /* bottom right action group */
          #toolbarBottom .actions-right { display: flex; gap: 6px; margin-left: auto; }
 
       </style>
-     <script type="module" crossorigin src="./assets/index-CNjgOeWG.js"></script>
+     <script type="module" crossorigin src="./assets/index-B-FUG6z7.js"></script>
    </head>
    <body>
          <div class="wrap">
@@ -230,16 +242,16 @@
                  <button id="btnSelectAll" type="button" data-i18n="btnSelectAllLabel" data-i18n-title="tooltipSelectAll" title="Select all in active track" aria-label="Select all">Select All</button>
                  <button id="btnClearSelection" type="button" data-i18n="btnClearSelectionLabel" data-i18n-title="tooltipClearSelection" title="Clear selection" aria-label="Clear selection">Clear</button>
                 <span class="divider"></span>
-                 <button id="btnUndo" type="button" data-i18n-title="tooltipUndo" title="Undo" aria-label="Undo">↶</button>
-                 <button id="btnRedo" type="button" data-i18n-title="tooltipRedo" title="Redo" aria-label="Redo">↷</button>
+                 <button id="btnUndo" type="button" data-i18n-title="tooltipUndo" title="Undo" aria-label="Undo">Undo</button>
+                 <button id="btnRedo" type="button" data-i18n-title="tooltipRedo" title="Redo" aria-label="Redo">Redo</button>
                 <span class="divider"></span>
-                 <button id="btnCopyNotes" type="button" data-i18n-title="tooltipCopyNotes" title="Copy notes" aria-label="Copy">📄</button>
-                 <button id="btnCutNotes" type="button" data-i18n-title="tooltipCutNotes" title="Cut notes" aria-label="Cut">✂️</button>
-                 <button id="btnPasteNotes" type="button" data-i18n-title="tooltipPasteNotes" title="Paste notes at playhead" aria-label="Paste">📋</button>
-                 <button id="btnDeleteNotes" type="button" data-i18n-title="tooltipDeleteNotes" title="Delete selected notes" aria-label="Delete">🗑️</button>
+                 <button id="btnCopyNotes" type="button" data-i18n-title="tooltipCopyNotes" title="Copy notes" aria-label="Copy">Copy</button>
+                 <button id="btnCutNotes" type="button" data-i18n-title="tooltipCutNotes" title="Cut notes" aria-label="Cut">Cut</button>
+                 <button id="btnPasteNotes" type="button" data-i18n-title="tooltipPasteNotes" title="Paste notes at playhead" aria-label="Paste">Paste</button>
+                 <button id="btnDeleteNotes" type="button" data-i18n-title="tooltipDeleteNotes" title="Delete selected notes" aria-label="Delete">Del</button>
                 <span class="divider"></span>
-                 <button id="btnVolumeDown" type="button" data-i18n-title="tooltipVolumeDown" title="Volume -1" aria-label="Volume down">🔉</button>
-                 <button id="btnVolumeUp" type="button" data-i18n-title="tooltipVolumeUp" title="Volume +1" aria-label="Volume up">🔊</button>
+                <button id="btnVolumeDown" type="button" data-i18n-title="tooltipVolumeDown" title="Volume -1" aria-label="Volume down">Vol-</button>
+                <button id="btnVolumeUp" type="button" data-i18n-title="tooltipVolumeUp" title="Volume +1" aria-label="Volume up">Vol+</button>
                 <span class="divider"></span>
                  <button id="btnZoomOut" type="button" data-i18n-title="tooltipZoomOut" title="Zoom out" aria-label="Zoom out">🔍➖</button>
                  <button id="btnZoomIn" type="button" data-i18n-title="tooltipZoomIn" title="Zoom in" aria-label="Zoom in">🔍➕</button>
@@ -279,7 +291,7 @@
                      <canvas id="rollBg" aria-hidden="true"></canvas>
                      <canvas id="roll" data-i18n-title="tooltipPianoRoll" title="Piano roll: click/drag to edit"></canvas>
                   </div>
-                  <div id="watermark">© 2025 fourthline@github</div>
+                  <div id="watermark">© 2025 yuudong123</div>
                
                <div id="customScrollbar">
                   <div id="customScrollbarThumb"></div>
