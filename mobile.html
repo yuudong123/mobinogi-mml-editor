@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-    <title>MML (작업중, 作業中, WIP)</title>
+    <title>MML</title>
     <link rel="icon" href="./favicon.ico" />
     
     <style>
@@ -348,7 +348,8 @@
         }
         
         .edit-mode .pianoroll-area {
-            height: 80vh; /* 45% + 35% */
+            /* 새 편집 도구 바(8vh)를 추가하므로 피아노롤은 72vh로 축소 */
+            height: 72vh;
             display: flex;
             flex-direction: row;
         }
@@ -357,8 +358,9 @@
             display: block;
             background: var(--panel);
             border-right: 1px solid #ddd; /* 좌측 패널 분리선 */
-            padding: 0;
-            overflow-y: auto;
+            padding: 8px 4px; /* 스크롤 시 좌우 여백 */
+            overflow-y: auto; /* 스크롤 허용 */
+            overflow-x: hidden;
             order: -1; /* 좌측 배치 */
         }
         
@@ -369,24 +371,22 @@
             max-width: 200px;
         }
         
-        /* PC 버전과 동일한 트랙 리스트 스타일 */
+        /* 트랙 리스트: 6등분 제거, 넉넉한 카드 높이 + 스크롤 */
         .tracks {
             padding: 8px;
             display: grid;
-            grid-template-rows: repeat(6, 1fr); /* 6등분 */
-            row-gap: 6px;
-            height: 100%;
+            grid-auto-rows: 108px; /* 각 트랙 카드 높이 */
+            row-gap: 8px;
             box-sizing: border-box;
-            overflow-y: hidden; /* 부모(panel) 스크롤만 사용 */
+            /* 세로 스크롤은 부모(.tracks-panel)의 overflow-y:auto가 담당 */
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            align-content: stretch;
         }
         .track-card {
             display: grid;
             grid-template-columns: 10px 1fr;
             gap: 8px;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             align-items: center;
             cursor: pointer;
@@ -396,7 +396,7 @@
             overflow: hidden;
             transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
             background: #fff;
-            height: 100%; /* 각 그리드 행을 가득 채움 */
+            height: auto; /* 내용에 맞게, grid-auto-rows로 기본 높이 제어 */
         }
         .track-card.is-active {
             border-color: #3a7afe;
@@ -405,9 +405,9 @@
         }
         .track-card:not(.is-active):hover { background: #fcfcff; }
         .track-color { width: 10px; height: 100%; border-radius: 4px; }
-    .track-main { display: grid; grid-template-rows: auto auto auto; row-gap: 6px; height: 100%; min-width: 0; }
-        .track-row { display: flex; gap: 6px; align-items: center; min-width: 0; }
-        .track-row--bottom { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 6px; }
+    .track-main { display: grid; grid-template-rows: auto auto auto; row-gap: 8px; height: 100%; min-width: 0; }
+        .track-row { display: flex; gap: 8px; align-items: center; min-width: 0; }
+        .track-row--bottom { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 8px; }
         .track-name { flex: 1 1 auto; min-width: 0; }
         .track-name input { width: 100%; box-sizing: border-box; padding: 4px 6px; font-size: 12px; }
     .track-instrument { min-width: 0; }
@@ -424,8 +424,8 @@
     /* 편집 모드에서는 가운데 영역을 좌측 정렬하여 공백 최소화 */
     .edit-mode .middle-bar-center { justify-content: flex-start; }
 
-    /* 편집 모드에서 녹음 비활성화(회색 처리) */
-    .edit-mode #btnRecord { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+    /* 편집 모드에서는 녹음 버튼을 완전히 숨김 */
+    .edit-mode #btnRecord { display: none; }
 
     /* 녹음 중: 정지 버튼(#btnStop) 제외 모든 인터랙션 비활성화/시각적 흐림 */
     .recording-mode .btn:not(#btnStop),
@@ -470,11 +470,26 @@
     .playing-mode .modal-overlay *, .recording-mode .modal-overlay * { pointer-events: auto !important; filter: none !important; opacity: 1 !important; }
 
     /* 전송바 구분선 및 키 높이 슬라이더 */
-    .transport-divider { width: 1px; height: calc(10vh * 0.5); background: var(--border); margin: 0 8px; }
+    /* 기본적으로 구분선/노트 길이 선택 숨김 */
+    .transport-divider { display: none; width: 1px; height: calc(10vh * 0.5); background: var(--border); margin: 0 8px; }
+    #noteLengthSelect { display: none; }
+    .edit-mode #noteLengthSelect { display: inline-block; }
     .keyheight-controls { display: none; align-items: center; gap: 6px; }
     .keyheight-label { font-size: 12px; color: #666; min-width: 28px; text-align: right; }
     #keyHeightRangeMobile { height: calc(10vh * 0.35); accent-color: var(--primary-color); width: 120px; }
     .edit-mode .keyheight-controls { display: inline-flex; }
+
+    /* 노트 생성 버튼: 기본 숨김, 편집 모드에서만 표시 */
+    #btnNoteCreate { display: none; }
+    .edit-mode #btnNoteCreate { display: inline-block; }
+
+    /* 녹음 볼륨 버튼: 편집 모드에서는 숨김 */
+    .edit-mode #btnRecVolume { display: none; }
+
+    /* 편집 도구 바: 편집 모드에서만 표시되는 하단 도구영역 */
+    .edit-tools-bar { display: none; height: 8vh; background: linear-gradient(135deg, #f1f3f4 0%, #e8eaed 100%); border-top: 2px solid var(--border); border-bottom: 2px solid var(--border); padding: 0 16px; box-sizing: border-box; align-items: center; justify-content: space-between; gap: 12px; }
+    .edit-mode .edit-tools-bar { display: flex; }
+    .edit-tools-left, .edit-tools-right { display: flex; align-items: center; gap: 8px; }
         
         /* 편집 모드에서 피아노롤과 트랙 패널을 가로 배치 */
         .edit-mode .pianoroll-area {
@@ -679,8 +694,8 @@
             border-color: var(--primary-color);
         }
     </style>
-  <script type="module" crossorigin src="./assets/mobile-yj4lkrV1.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/timeline-U0IUL4mT.js">
+  <script type="module" crossorigin src="./assets/mobile-NGJBFb3F.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/timeline-CN1gSxtj.js">
 </head>
 <body>
     <div class="mobile-container">
@@ -688,7 +703,6 @@
         <div class="top-bar">
             <div class="top-bar-left">
                 <div class="time-sig-section">
-                    <span>박자</span>
                     <select class="time-sig-select" id="timeSigSelect">
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -796,16 +810,41 @@
                     <button class="btn btn--transport" id="btnPause"><img src="./images/pause.svg" alt="Pause" /></button>
                     <button class="btn btn--stop" id="btnStop"><img src="./images/stop.svg" alt="Stop" /></button>
                     <div class="transport-divider"></div>
-                    <div class="keyheight-controls">
-                        <span class="keyheight-label" id="keyHeightLabel">24px</span>
-                        <input type="range" id="keyHeightRangeMobile" min="16" max="32" step="1" value="24" />
-                    </div>
                 </div>
             </div>
             
             <div class="middle-bar-right">
+                <button class="btn" id="btnRecVolume">녹음 볼륨</button>
+                <div class="keyheight-controls">
+                    <span class="keyheight-label" id="keyHeightLabel">24px</span>
+                    <input type="range" id="keyHeightRangeMobile" min="16" max="32" step="1" value="24" />
+                </div>
+                
                 <button class="btn" id="btnEditPianoroll">피아노롤/트랙 편집</button>
             </div>
+        </div>
+
+        <!-- 편집 도구 모음(편집 모드 전용, 중단바 아래) -->
+        <div class="edit-tools-bar">
+            <div class="edit-tools-left">
+                <select class="instrument-select" id="noteLengthSelect" title="노트 길이">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16" selected>16</option>
+                    <option value="32">32</option>
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="48">48</option>
+                </select>
+                <button class="btn" id="btnNoteCreate" title="노트 생성 모드 토글">노트 생성</button>
+                <div class="divider"></div>
+                <button class="btn" id="btnCopy" title="선택 노트 복사">복사</button>
+                <button class="btn" id="btnCut" title="잘라내기">잘라내기</button>
+                <button class="btn" id="btnPaste" title="붙여넣기">붙여넣기</button>
+            </div>
+            <div class="edit-tools-right"></div>
         </div>
         
         <!-- 건반 - 45% -->
@@ -850,8 +889,7 @@
             </div>
         </div>
     </div>
-
-
+
         <script>
         // 크롬 DevTools 기기 툴바 등에서 좌/우 스와이프에 의한 뒤로가기 방지
         (function(){
