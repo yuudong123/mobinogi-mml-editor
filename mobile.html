@@ -81,9 +81,13 @@
         
         .top-bar-right {
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
         }
         
-        .divider {
+    .divider {
             width: 1px;
             height: calc(10vh * 0.4);
             background: var(--border);
@@ -151,6 +155,13 @@
         
         .lang-controls {
             display: flex;
+            gap: 3px;
+        }
+        /* Ensure 3 language buttons are in a row */
+        .lang-controls__group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
             gap: 3px;
         }
         
@@ -412,8 +423,10 @@
         .track-name input { width: 100%; box-sizing: border-box; padding: 4px 6px; font-size: 12px; }
     .track-instrument { min-width: 0; }
     .track-instrument select { width: 100%; min-width: 0; }
-        .track-controls { display: inline-flex; gap: 4px; }
-        .track-controls button { width: 24px; height: 24px; font-size: 12px; font-weight: 700; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; background: #fff; color: #000; padding: 0; }
+    .track-controls { display: inline-flex; gap: 4px; }
+    .track-controls button { width: 24px; height: 24px; font-size: 12px; font-weight: 700; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; background: #fff; color: #000; padding: 0; transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
+    .track-controls button.is-active[data-kind="mute"] { background: #f44336; color: #fff; border-color: #d32f2f; }
+    .track-controls button.is-active[data-kind="solo"] { background: #ff9800; color: #fff; border-color: #ef6c00; }
         .track-charcount { font-size: 11px; color: #666; white-space: nowrap; justify-self: end; }
 
         /* 편집 모드에서 중단바 트랙/악기 선택 숨김 */
@@ -493,6 +506,8 @@
     .edit-tools-bar { display: none; height: 8vh; background: linear-gradient(135deg, #f1f3f4 0%, #e8eaed 100%); border-top: 2px solid var(--border); border-bottom: 2px solid var(--border); padding: 0 16px; box-sizing: border-box; align-items: center; justify-content: space-between; gap: 12px; }
     .edit-mode .edit-tools-bar { display: flex; }
     .edit-tools-left, .edit-tools-right { display: flex; align-items: center; gap: 8px; }
+    /* 편집툴바 안의 구분선은 높이를 더 줄임 */
+    .edit-tools-bar .divider { height: 60%; }
         
         /* 편집 모드에서 피아노롤과 트랙 패널을 가로 배치 */
         .edit-mode .pianoroll-area {
@@ -689,6 +704,7 @@
             min-width: 40px;
             padding: 8px 10px;
             font-size: 16px;
+            white-space: nowrap;
         }
         
         .btn--lang.active {
@@ -697,8 +713,8 @@
             border-color: var(--primary-color);
         }
     </style>
-  <script type="module" crossorigin src="./assets/mobile-Bwy_6CYl.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/timeline-Cty6ufw_.js">
+  <script type="module" crossorigin src="./assets/mobile-d9aRkMNC.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/languages-Cgt_gsPd.js">
 </head>
 <body>
     <div class="mobile-container">
@@ -728,12 +744,6 @@
                 </div>
                 
                 <div class="divider"></div>
-                
-                <div class="tempo-section">
-                    <span>Tempo</span>
-                    <span class="tempo-display" id="tempoDisplay">120</span>
-                    <span>bpm</span>
-                </div>
             </div>
             
             <div class="top-bar-center">
@@ -742,21 +752,23 @@
             </div>
             
             <div class="top-bar-right">
-                <button class="btn" id="btnPasteMML">MML 붙여넣기</button>
-                <button class="btn" id="btnConvert">변환하기</button>
-                <button class="btn" id="btnLoad">불러오기</button>
+                <button class="btn" id="btnPasteMML" data-i18n="paste">MML@... 붙여넣기</button>
+                <button class="btn" id="btnConvert" data-i18n="convert">변환</button>
+                <button class="btn" id="btnLoad" data-i18n="load">불러오기</button>
                 
                 <div class="divider"></div>
                 
-                <button class="btn" id="btnGuide">조작 가이드</button>
+                <button class="btn" id="btnGuide" data-i18n="guide">조작 가이드</button>
                 
                 <div class="lang-controls">
-                    <button class="btn btn--lang active" id="langKo">한</button>
-                    <button class="btn btn--lang" id="langJa">日</button>
-                    <button class="btn btn--lang" id="langEn">En</button>
+                                        <div class="lang-controls__group" role="radiogroup" aria-label="Language">
+                                            <button class="btn btn--lang active" id="langKo" role="radio" aria-checked="true" data-i18n-title="tooltipLangKo" title="Korean">한</button>
+                                            <button class="btn btn--lang" id="langJa" role="radio" aria-checked="false" data-i18n-title="tooltipLangJa" title="Japanese">日</button>
+                                            <button class="btn btn--lang" id="langEn" role="radio" aria-checked="false" data-i18n-title="tooltipLangEn" title="English">En</button>
+                                        </div>
                 </div>
                 
-                <button class="btn" id="btnDesktop">PC 버전</button>
+                <button class="btn" id="btnDesktop" data-i18n="btnGoToDesktop" data-i18n-title="tooltipGoToDesktop" title="PC 버전">PC 버전</button>
             </div>
         </div>
         
@@ -791,15 +803,7 @@
                     <option value="5">Track 6</option>
                 </select>
                 
-                <select class="instrument-select" id="instrumentSelect">
-                    <option value="piano">Piano</option>
-                    <option value="lute">Lute</option>
-                    <option value="mandolin">Mandolin</option>
-                    <option value="violin">Violin</option>
-                    <option value="flute">Flute</option>
-                    <option value="chalumeau">Chalumeau</option>
-                    <option value="xylophone">Xylophone</option>
-                </select>
+                <select class="instrument-select" id="instrumentSelect"></select>
             </div>
             
             <div class="middle-bar-center">
@@ -817,13 +821,13 @@
             </div>
             
             <div class="middle-bar-right">
-                <button class="btn" id="btnRecVolume">녹음 볼륨</button>
+                <button class="btn" id="btnRecVolume" data-i18n="btnRecVolume">녹음 볼륨</button>
                 <div class="keyheight-controls">
                     <span class="keyheight-label" id="keyHeightLabel">24px</span>
                     <input type="range" id="keyHeightRangeMobile" min="16" max="32" step="1" value="24" />
                 </div>
                 
-                <button class="btn" id="btnEditPianoroll">피아노롤/트랙 편집</button>
+                <button class="btn" id="btnEditPianoroll" data-i18n="btnEditPianoroll">편집 모드</button>
             </div>
         </div>
 
@@ -841,13 +845,20 @@
                     <option value="24">24</option>
                     <option value="48">48</option>
                 </select>
-                <button class="btn" id="btnNoteCreate" title="노트 생성 모드 토글">노트 생성</button>
+                <button class="btn" id="btnNoteCreate" data-i18n="btnNoteCreateLabel" data-i18n-title="tooltipNoteCreate" title="노트 생성 모드 토글">노트 생성</button>
                 <div class="divider"></div>
-                <button class="btn" id="btnCopy" title="선택 노트 복사">복사</button>
-                <button class="btn" id="btnCut" title="잘라내기">잘라내기</button>
-                <button class="btn" id="btnPaste" title="붙여넣기">붙여넣기</button>
-                <button class="btn" id="btnVolumeDown" title="선택 볼륨 감소">볼륨-</button>
-                <button class="btn" id="btnVolumeUp" title="선택 볼륨 증가">볼륨+</button>
+                <!-- Beat+/Bar+/Beat-/Bar- (데스크톱 타임라인 조작 포팅) -->
+                <button class="btn" id="btnPushBeat" data-i18n="btnBeatPlus" data-i18n-title="tooltipBeatPlus" title="플레이헤드 오른쪽을 한 박 밀기">Beat+</button>
+                <button class="btn" id="btnPushBar" data-i18n="btnBarPlus" data-i18n-title="tooltipBarPlus" title="플레이헤드 오른쪽을 한 마디 밀기">Bar+</button>
+                <button class="btn" id="btnCutBeat" data-i18n="btnBeatMinus" data-i18n-title="tooltipBeatMinus" title="플레이헤드 오른쪽 한 박을 잘라내고 당기기">Beat-</button>
+                <button class="btn" id="btnCutBar" data-i18n="btnBarMinus" data-i18n-title="tooltipBarMinus" title="플레이헤드 오른쪽 한 마디를 잘라내고 당기기">Bar-</button>
+                <div class="divider"></div>
+                <button class="btn" id="btnCopy" data-i18n="btnCopyLabel" data-i18n-title="tooltipCopyNotes" title="선택 노트 복사">복사</button>
+                <button class="btn" id="btnCut" data-i18n="btnCutLabel" data-i18n-title="tooltipCutNotes" title="잘라내기">잘라내기</button>
+                <button class="btn" id="btnPaste" data-i18n="btnPasteLabel" data-i18n-title="tooltipPasteNotes" title="붙여넣기">붙여넣기</button>
+                <div class="divider"></div>
+                <button class="btn" id="btnVolumeDown" data-i18n="btnVolumeDownLabel" data-i18n-title="tooltipVolumeDown" title="선택 볼륨 감소">볼륨-</button>
+                <button class="btn" id="btnVolumeUp" data-i18n="btnVolumeUpLabel" data-i18n-title="tooltipVolumeUp" title="선택 볼륨 증가">볼륨+</button>
             </div>
             <div class="edit-tools-right"></div>
         </div>

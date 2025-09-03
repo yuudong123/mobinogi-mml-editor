@@ -436,10 +436,12 @@
             color: #1f2937;
          }
       </style>
-     <script type="module" crossorigin src="./assets/main-UYOcu6Nv.js"></script>
-     <link rel="modulepreload" crossorigin href="./assets/timeline-Cty6ufw_.js">
-     <link rel="modulepreload" crossorigin href="./assets/converter-fJK0iSIn.js">
-     <link rel="modulepreload" crossorigin href="./assets/languages-D2lkxtMG.js">
+     <script type="module" crossorigin src="./assets/main-CtawLEYY.js"></script>
+     <link rel="modulepreload" crossorigin href="./assets/languages-Cgt_gsPd.js">
+     <link rel="modulepreload" crossorigin href="./assets/converter-Bxff0mca.js">
+     <link rel="modulepreload" crossorigin href="./assets/button-WIurEURm.js">
+     <link rel="modulepreload" crossorigin href="./assets/convertModal-BoFIxvxa.js">
+     <link rel="modulepreload" crossorigin href="./assets/guideModal-DTHVvsmR.js">
    </head>
    <body>
       <div id="watermark">© yuudong123 · Optimization by fourthline(MabiIcco)</div>
@@ -488,7 +490,7 @@
                  <!-- tempoBox removed: use ruler right-click tempo anchors -->
                <div class="divider"></div>
                <div id="transport">
-                  <span id="progress" data-i18n-title="tooltipProgress" title="Playback time (mm:ss:mmm)">0 / 0</span>
+                  <span id="progress" data-i18n-title="tooltipProgress" title="Playback time (mm:ss:mmm)" aria-live="polite">0 / 0</span>
                   <button id="btnPlay" data-i18n-title="tooltipPlay" aria-label="Play" title="Play"><img src="./images/play.svg" alt="" /></button>
                   <button id="btnPause" data-i18n-title="tooltipPause" aria-label="Pause" title="Pause"><img src="./images/pause.svg" alt="" /></button>
                   <button id="btnStop" data-i18n-title="tooltipStop" aria-label="Stop" title="Stop"><img src="./images/stop.svg" alt="" /></button>
@@ -500,9 +502,11 @@
                   <input id="keyHeightRange" type="range" min="16" max="32" step="1" value="16" data-i18n-title="tooltipKeyHeight" title="Note height (16-32)" aria-label="Note height" />
                   <button id="btnLoad" type="button" data-i18n="load" data-i18n-title="tooltipLoad" title="Load project">Load</button>
                   <button id="btnGuide" type="button" data-i18n="guide" data-i18n-title="tooltipGuide" title="User Guide">User Guide</button>
-                  <button id="langKo" type="button" data-i18n-title="tooltipLangKo" title="Korean">한</button>
-                  <button id="langJa" type="button" data-i18n-title="tooltipLangJa" title="Japanese">日</button>
-                  <button id="langEn" type="button" data-i18n-title="tooltipLangEn" title="English">En</button>
+                           <div class="lang-controls__group" role="radiogroup" aria-label="Language">
+                              <button id="langKo" type="button" role="radio" aria-checked="true" data-i18n-title="tooltipLangKo" title="Korean">한</button>
+                              <button id="langJa" type="button" role="radio" aria-checked="false" data-i18n-title="tooltipLangJa" title="Japanese">日</button>
+                              <button id="langEn" type="button" role="radio" aria-checked="false" data-i18n-title="tooltipLangEn" title="English">En</button>
+                           </div>
                </div>
             </div>
          </div>
