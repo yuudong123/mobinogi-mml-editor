@@ -482,6 +482,9 @@
     /* 노트 생성 버튼: 기본 숨김, 편집 모드에서만 표시 */
     #btnNoteCreate { display: none; }
     .edit-mode #btnNoteCreate { display: inline-block; }
+    /* 노트 생성 버튼 활성화 시 파란색 하이라이트 */
+    #btnNoteCreate.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+    #btnNoteCreate.active:hover { background: #2f65d2; }
 
     /* 녹음 볼륨 버튼: 편집 모드에서는 숨김 */
     .edit-mode #btnRecVolume { display: none; }
@@ -694,8 +697,8 @@
             border-color: var(--primary-color);
         }
     </style>
-  <script type="module" crossorigin src="./assets/mobile-NGJBFb3F.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/timeline-CN1gSxtj.js">
+  <script type="module" crossorigin src="./assets/mobile-EjX3iE2V.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/timeline-Cty6ufw_.js">
 </head>
 <body>
     <div class="mobile-container">
@@ -843,6 +846,8 @@
                 <button class="btn" id="btnCopy" title="선택 노트 복사">복사</button>
                 <button class="btn" id="btnCut" title="잘라내기">잘라내기</button>
                 <button class="btn" id="btnPaste" title="붙여넣기">붙여넣기</button>
+                <button class="btn" id="btnVolumeDown" title="선택 볼륨 감소">볼륨-</button>
+                <button class="btn" id="btnVolumeUp" title="선택 볼륨 증가">볼륨+</button>
             </div>
             <div class="edit-tools-right"></div>
         </div>
