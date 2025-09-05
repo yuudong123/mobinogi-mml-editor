@@ -56,9 +56,9 @@
             flex-wrap: wrap;
             width: 100%;
          }
-         /* Keep bottom toolbar on a single line */
+         /* Allow bottom toolbar to wrap onto the next line on narrow screens */
          #toolbarBottom {
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
          }
          .panel {
             background: var(--panel);
@@ -427,6 +427,7 @@
             display: flex;
             gap: 6px;
             margin-left: auto;
+            flex-wrap: wrap; /* let right-side actions wrap as well */
          }
          /* Ensure visibility if primary class is accidentally applied */
          #btnGoToMobile.btn.btn--primary {
