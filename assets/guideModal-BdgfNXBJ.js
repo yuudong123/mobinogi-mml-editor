@@ -1,4 +1,4 @@
-import{e as l,c as r}from"./button-WIurEURm.js";import{t as c,c as p,C as u}from"./languages-Cgt_gsPd.js";function y(n){const d=n==="desktop"||n==="mobile"?n:"desktop",e=document.createElement("div");e.style.cssText=`
+import{e as l,c as r}from"./button-WIurEURm.js";import{t as c,c as p,C as u}from"./languages-BtlVKnIV.js";function y(n){const d=n==="desktop"||n==="mobile"?n:"desktop",e=document.createElement("div");e.style.cssText=`
         position: fixed;
         top: 0;
         left: 0;
